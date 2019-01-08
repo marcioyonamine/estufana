@@ -1,0 +1,48 @@
+// algoritmo
+
+void setup(){
+
+	variavel umid
+	variavel temp
+	variavel rele_lampada
+	variavel rele_bomba
+	variavel rele_exaustor
+	variavel urlserver
+	variavel umidserver
+	variavel tempserver
+	variavel umid_ideal
+	variavel temp_ideal
+}
+
+void loop(){
+
+	// verifica se o servidor está online
+	// lê o sensor de umidade e guarda em umid
+	// lê o sensor de temperatura e guarda em temp
+
+	// se o servidor estiver online (o controle é do servidor)
+		// envia os valores umid e temp
+		// carrega as variaveis 
+		// lê urlserver e carrega as variaveis rele_lampada, rele_bomba, rele_exaustor
+	
+	
+	// caso nao (o controle é do próprio arduino)
+		// se o umid < umid_ideal
+			// liga rele_bomba
+		// caso nao
+			// desliga rele_bomba
+	
+		// se o temp < temp_ideal
+			// liga rele_exaustor
+		// caso nao
+			// desliga rele_exaustor
+		
+		liga rele_bomba
+		
+	
+		
+	// espera 1000ms	
+	
+
+	
+}
