@@ -1,14 +1,11 @@
 <?php
 
-// Conexão de Banco MySQLi
+include "globals.php";
 
+// Conexão de Banco MySQLi
 // Cria conexao ao banco. Substitui o include "conecta_mysql.php" .
 function bancoMysqli(){ 
-	$servidor = 'localhost';
-	$usuario = 'root';
-	$senha = '';
-	$banco = 'acervo';
-	$con = mysqli_connect($servidor,$usuario,$senha,$banco); 
+	$con = mysqli_connect($GLOBALS["servidor"],$GLOBALS["usuario"],$GLOBALS["senha"],$GLOBALS["banco"]); 
 	mysqli_set_charset($con,"utf8");
 	return $con;
 }
