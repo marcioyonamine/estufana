@@ -1,8 +1,7 @@
 <?php 
 
-
-
-	include "inc/funcoesGerais.php";
+include "inc/funcoesConecta.php";
+include "inc/funcoesGerais.php";
 
 if(isset($_POST['usuario'])){
 
@@ -83,7 +82,10 @@ if(isset($_POST['usuario'])){
 	  	</div>
 	  </section>  
 
-
+<?php 
+$con = mysqli_connect($GLOBALS["servidor"],$GLOBALS["usuario"],$GLOBALS["senha"],$GLOBALS["banco"]); 
+var_dump($con);
+?>
 
     
 
