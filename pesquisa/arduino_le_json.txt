@@ -1,0 +1,209 @@
+/*
+  Web client JSON Avise Ja
+ 
+  Este exemplo se conecta ao servidor http://json.aviseja.com.br que traz informaçes (JSON) 
+  do site http://www.aviseja.com.br (rastreamento de pacotes via Email, SMS e RSS). O exemplo utiliza
+  a biblioteca aJSON ( https://github.com/interactive-matter/aJson ) para o parse do conteudo JSON que 
+  o site retorna. Utiliza tambem o Shield Ethernet W5100 com a biblioteca oficial do Arduino e IDE Arduino 1.0.4 
+ 
+ Exemplo do conteudo JSON:
+ {"adesaoDia":15,"totalAdesao":432,"totalSolicitacoes":1314}
+ 
+ Criado em 24 de Abril 2013
+ por Victor Hugo M. A. Santos
+ 
+ */
+
+#include <SPI.h>
+#include <Ethernet.h>
+#include <aJSON.h>
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+//Seta o LCD no endereco 0x20
+LiquidCrystal_I2C lcd(0x20,16,2);
+
+//MAC do Arduino
+byte mac[] = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+
+//IP do http://json.aviseja.com.br
+//IPAddress server(192,168,1,3); // aviseja.com.br
+char server[] = "json.aviseja.com.br"; // aviseja.com.br
+boolean startRead = false;
+String jsonString = "";
+String jsonStringCurr = "";
+//const int port = 9000; //Porta do servidor
+const int port = 80;
+
+int adesaoDiaCurr = 0;
+boolean flagPrimeiraVez = true;
+
+int buzzer = 7; 
+int led = 9; 
+
+// Inicializando a biblioteca ethernet
+EthernetClient client;
+
+void setup() {
+  
+  pinMode(buzzer, OUTPUT);
+  digitalWrite(buzzer, LOW);
+  
+  pinMode(led, OUTPUT);
+  digitalWrite(led, LOW);
+  
+  //Inicializa o LCD 
+  lcd.init();
+  //Acende a luz de fundo
+  lcd.backlight();
+  lcd.print("Monitor Avise Ja");
+  lcd.setCursor(0, 1);
+  lcd.print("Iniciando...");
+  delay(5000);
+  // Iniciando a conexao ethernet e recebendo o IP dinamicamente
+  if (Ethernet.begin(mac) == 0) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Erro na rede");
+    lcd.setCursor(0, 1);
+    lcd.print("Reiniciar 5 seg.");
+    // Problemas na conexao ethernet, verifique a sua rede
+    delay(5000);
+    setup();
+  }
+
+}
+
+void loop()
+{
+  Serial.println("Aguardar 5 segundos");
+  delay(5000);
+  
+  //Consulta a URL / do servidor e recebe uma String com notacao JSON
+  jsonString = requestServer();
+  
+  if(!jsonString.equals("")){
+    if(!jsonString.equals(jsonStringCurr)){
+      
+      //Atualiza a variavel que armazena o JSON atual
+      jsonStringCurr = jsonString;
+      
+      char jsonChar[jsonString.length()];
+      jsonString.toCharArray(jsonChar, jsonString.length() + 1);
+      parseJson(jsonChar);
+      jsonString = "";
+  }
+  }
+}
+
+String requestServer(){
+  
+ Serial.println("conectando aviseja.com.br...");
+
+  // Iniciando conexao com o servidor 
+  if (client.connect(server, port)) {
+    Serial.println("connectado");
+    // GET no PATH / do servidor
+    client.println("GET / HTTP/1.1");
+    client.println("HOST: json.aviseja.com.br");
+    client.println();
+    
+    //Aguardando conexao
+    while(!client.available()){
+      delay(1);
+    }
+    
+    //Percorre os caracteres do envelope HTTP do servidor e armazena na String apenas o conteudo JSON
+    while (client.available()) {
+    char c = client.read();
+    if( c == '{' ) { 
+      startRead = true; 
+    }
+    if ( startRead ) { 
+      jsonString += c; 
+    }
+  }
+  
+  //Reseta a flag de leitura de conteudo JSON
+  startRead = false;
+    
+  } 
+ else {
+    // Caso nao ocorra conexao
+    Serial.println("conexao falhou");
+  }
+  
+  //Aguarda a desconexao com o servidor
+  while(client.connected()){
+    delay(1);
+  }
+  
+  // Finaliza o socket de conexao
+  if (!client.connected()) {
+    Serial.println();
+    Serial.println("desconectando...");
+    client.stop();
+    
+  }
+  
+  return jsonString;
+  
+}
+
+void parseJson(char *jsonString) 
+{
+    //Inicializa o objeto Pai
+    aJsonObject* root = aJson.parse(jsonString);
+
+    if (root != NULL) {
+        //Caputura o objeto adesaoDia
+        aJsonObject* adesaodia = aJson.getObjectItem(root, "adesaoDia"); 
+        
+        //Caputura o objeto totalAdesao
+        aJsonObject* totalAdesao = aJson.getObjectItem(root, "totalAdesao");
+        
+        //Caputura o objeto totalSolicitacoes
+        aJsonObject* totalSolicitacoes = aJson.getObjectItem(root, "totalSolicitacoes");
+        
+        int valor = adesaodia->valueint;
+        
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Dia: ");                
+        lcd.print(adesaodia->valueint);
+        lcd.setCursor(8, 0);
+        lcd.print("Tot: ");
+        lcd.print(totalAdesao->valueint);
+        lcd.setCursor(0, 1);
+        lcd.print("Tot. cod.: ");
+        lcd.print(totalSolicitacoes->valueint);
+        
+        if(valor > adesaoDiaCurr){          
+          if(!flagPrimeiraVez){
+            for(int x = 0; x < valor - adesaoDiaCurr; x++){
+              emitirAlarme();
+            }            
+          }else{
+            flagPrimeiraVez = false;
+          }
+          
+          adesaoDiaCurr = valor;
+          
+        }else if(valor < adesaoDiaCurr){
+          adesaoDiaCurr = valor;
+        }
+    }
+    
+    //Deleta o objeto apos a utilizacao para liberacao de memoria
+    aJson.deleteItem(root);
+
+}
+
+void emitirAlarme(){
+  digitalWrite(led, HIGH);    // sets the LED off
+  digitalWrite(buzzer, HIGH);   // sets the LED on
+  delay(125);                  // waits for a second
+  digitalWrite(buzzer, LOW);   // sets the LED on
+  delay(5000);
+  digitalWrite(led, LOW);    // sets the LED off 
+}
