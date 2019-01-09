@@ -270,7 +270,10 @@ function releApi($format){
 		$rele[3] = $x['rele04'];
 		$rele[4] = $x['rele04'];
 		
-	}else{ // programado
+	}else{ 
+		$rele['tipo'] = 'programado';
+		
+		// programado
 		// carrega a última leitura
 		$sql_leitura = "SELECT * FROM history ORDER BY datetime DESC LIMIT 0,1";
 		$query_leitura = mysqli_query($con,$sql_leitura);
@@ -337,6 +340,8 @@ function releApi($format){
 		return $rele;
 	}		
 }
+
+
 
 function ultimaLeitura(){
 	$con = bancoMysqli();
