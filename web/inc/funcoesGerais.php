@@ -271,7 +271,7 @@ function releApi($format){
 		$rele[4] = $x['rele04'];
 		
 	}else{ 
-		$rele['tipo'] = 'programado';
+
 		
 		// programado
 		// carrega a última leitura
@@ -303,7 +303,7 @@ function releApi($format){
 		$horainicial = strtotime($programacao['lampada_liga']);
 		$horafinal = strtotime($programacao['lampada_desliga']);
 		$horaatual = strtotime('now');
-		
+		$rele['horaserver'] = date('H:i:s');	
 		/*
 		echo $horainicial."<br />";
 		echo $horafinal."<br />";
