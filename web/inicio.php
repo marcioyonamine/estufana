@@ -25,7 +25,7 @@ if($status == 1){
 					?>
 					<p>Rel01: <?php if($rele_status[1] == 1){ echo "LIGADO"; }else{echo "DESLIGADO";} ?> / Rele02: <?php if($rele_status[1] == 1){ echo "LIGADO"; }else{echo "DESLIGADO";} ?> / Rele03: <?php if($rele_status[1] == 1){ echo "LIGADO"; }else{echo "DESLIGADO";} ?> / Rele04: <?php if($rele_status[1] == 1){ echo "LIGADO"; }else{echo "DESLIGADO";} ?></p>
 					<p> A última leitura foi feita em <?php echo exibirDataBr($leitura['datetime'])?> às <?php echo exibirHora($leitura['datetime'])?></p>
-                    <p>Temperatura está em <?php echo $leitura['temp'] ?>ºC, a Umidade em <?php echo $leitura['temp'] ?>% e o pH em <?php echo $leitura['ph'] ?></p>
+                    <p>Temperatura está em <?php echo $leitura['temp'] ?>ºC, a Umidade em <?php echo $leitura['umid'] ?>% e o pH em <?php echo $leitura['ph'] ?></p>
 					
 					
 					
