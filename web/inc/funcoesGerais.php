@@ -255,9 +255,11 @@ function mudaRele($status,$rele){
 
 function releApi($format){
 	$status = getStatus();
-	$rele = array();
+	$rele = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
 	$con = bancoMysqli();
-		
+	
+	
+	
 	if($status == 1){ // manual
 
 		$sql = "SELECT * FROM manual LIMIT 0,1";
@@ -267,6 +269,7 @@ function releApi($format){
 		$rele[2] = $x['rele02'];
 		$rele[3] = $x['rele04'];
 		$rele[4] = $x['rele04'];
+		
 	}else{ // programado
 		// carrega a última leitura
 		$sql_leitura = "SELECT * FROM history ORDER BY datetime DESC LIMIT 0,1";
