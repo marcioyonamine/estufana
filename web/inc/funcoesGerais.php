@@ -202,5 +202,56 @@ function diferencaDatas($data_inicial,$data_final){
 
 }
 
+function recuperaDados($tabela,$idEvento,$campo){ //retorna uma array com os dados de qualquer tabela. serve apenas para 1 registro.
+	$con = bancoMysqli();
+	$sql = "SELECT * FROM $tabela WHERE ".$campo." = '$idEvento' LIMIT 0,1";
+	$query = mysqli_query($con,$sql);
+	$campo = mysqli_fetch_array($query);
+	return $campo;		
+}
+
+function getStatus(){
+	$con = bancoMysqli();
+	$sql = "SELECT status from status WHERE id = '1'";
+	$query = mysqli_query($con,$sql);
+	$s = mysqli_fetch_array($query);
+	return $s['status'];
+}
+
+function changeStatus(){
+	$con = bancoMysqli();
+	$s = getStatus();
+	if($s == 1){
+		$ns = 0;	
+	}else{
+		$ns = 1;
+	}
+
+	$sql = "UPDATE `status` SET `status` = '$ns' WHERE `status`.`id` = 1";
+	mysqli_query($con,$sql);	
+	
+}
+
+function getRele($status){
+	$con = bancoMysqli();
+	if($status == 1){	
+		$sql = "SELECT * FROM manual LIMIT 0,1";
+		$query = mysqli_query($con,$sql);
+		$x = mysqli_fetch_array($query);
+		return $x;
+	}	
+	
+}
+
+function mudaRele($status,$rele){
+	$con = bancoMysqli();
+	if($status == 1){$x = 0;}else{$x = 1;}
+	$sql = "UPDATE manual SET rele".$rele." = '$x' WHERE id = 1";
+	 if(!mysqli_query($con,$sql)){
+		 echo $sql;
+	 }	
+	
+}
+
 
 ?>

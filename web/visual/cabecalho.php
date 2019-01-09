@@ -19,7 +19,7 @@ ini_set('session.gc_maxlifetime', 60*60*2); // 60 minutos
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Sistema Clara - Centro Cultural São Paulo</title>
+    <title>Estufana v0.1</title>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- css -->
