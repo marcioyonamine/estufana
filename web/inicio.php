@@ -19,9 +19,13 @@ if($status == 1){
 				<div class="section-heading">
 					 <h3>Bem-vindo(a)!</h3>
                     <p>O sistema está em modo: <strong><?php echo ($status == 1) ? 'Manual' : 'Programado'; ?></strong></p>
-					<p>Rel01: / Rele02: / Rele03: / Rele04: </p>
-					<p> A última leitura foi feita em xx/xx/xxxx às xx</p>
-                    <p>Temperatura está em xx e Umidade em yy</p>
+					<?php 
+					$rele_status = releApi("array");
+					$leitura = ultimaLeitura();
+					?>
+					<p>Rel01: <?php if($rele_status[1] == 1){ echo "LIGADO"; }else{echo "DESLIGADO";} ?> / Rele02: <?php if($rele_status[1] == 1){ echo "LIGADO"; }else{echo "DESLIGADO";} ?> / Rele03: <?php if($rele_status[1] == 1){ echo "LIGADO"; }else{echo "DESLIGADO";} ?> / Rele04: <?php if($rele_status[1] == 1){ echo "LIGADO"; }else{echo "DESLIGADO";} ?></p>
+					<p> A última leitura foi feita em <?php echo exibirDataBr($leitura['datetime'])?> às <?php echo exibirHora($leitura['datetime'])?></p>
+                    <p>Temperatura está em <?php echo $leitura['temp'] ?>ºC, a Umidade em <?php echo $leitura['temp'] ?>% e o pH em <?php echo $leitura['ph'] ?></p>
 					
 					
 					
@@ -71,6 +75,7 @@ $rele = getRele(1);
 				<div class="col-md-offset-2 col-md-8">
 					<table border = '1' width="100%">
 					<tr>
+
 					<td width='25%'>Relê 01</td><td width='25%'>Relê 02</td><td width='25%'>Relê 03</td><td>Relê 04</td>
 					</tr>
 					<tr>
@@ -140,10 +145,21 @@ $rele = getRele(1);
 	
 	
 ?>
-			
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-8">
+	<h2>Lista Programado</h2>	
+	
+				</div>
+			</div>	
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-8">
+<a href='?p=insere' class="btn btn-theme btn-lg btn-block">Inserir nova programação</a>
+	<br /><br />
+				</div>
+			</div>				
 			<div class="form-group">
 							<div class="col-md-offset-2 col-md-8">
-<h2>Lista Programado</h2>				
+			
 			<table border = '1' width="100%">
 					<tr>
 					<td width="20%">Título</td>
@@ -164,7 +180,7 @@ $rele = getRele(1);
 					<td><?php echo $lista['temperatura']; ?>º / rele <?php echo $lista['rele_temp']; ?></td>
 					<td><?php echo $lista['umidade']; ?>% / rele <?php echo $lista['rele_umidade']; ?></td>
 					<td>entre <?php echo $lista['ph_min']; ?> e <?php echo $lista['ph_max']; ?></td>
-					<td>entre <?php echo substr($lista['lampada_liga'],0,6); ?> e <?php echo substr($lista['lampada_desliga'],0,6); ?></td>
+					<td>entre <?php echo substr($lista['lampada_liga'],0,5); ?> e <?php echo substr($lista['lampada_desliga'],0,5); ?> / Rele <?php echo $lista['rele_lampada']; ?></td>
 					<td><form method="POST" action="?p=edita" class="form-horizontal" role="form">	
 						<input type="hidden" name="editar" value="<?php echo $lista['id']; ?>" />
 						<input type="submit" class="btn btn-theme btn-lg btn-block" value="Editar">
