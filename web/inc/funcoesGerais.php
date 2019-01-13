@@ -303,7 +303,6 @@ function releApi($format){
 		$horainicial = strtotime($programacao['lampada_liga']);
 		$horafinal = strtotime($programacao['lampada_desliga']);
 		$horaatual = strtotime('now');
-		$rele['horaserver'] = date('H:i:s');	
 		/*
 		echo $horainicial."<br />";
 		echo $horafinal."<br />";

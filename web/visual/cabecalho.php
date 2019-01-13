@@ -33,5 +33,5 @@ ini_set('session.gc_maxlifetime', 60*60*2); // 60 minutos
       </head>
   <body>
   <div id="bar">
-  <p id="p-bar"><?php echo saudacao(); ?>, <?php echo $_SESSION['usuario']; ?>  </a> </p>
+  <p id="p-bar"><?php echo saudacao(); ?>, <?php echo $_SESSION['usuario']; ?>  </a> [ <a href='../inc/logout.php'>sair</a> ]</p>
   </div>
